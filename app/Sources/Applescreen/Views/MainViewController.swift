@@ -158,8 +158,16 @@ final class MainViewController: NSViewController {
 }
 
 private func defaultCorePath() -> String {
-    // Points at the debug build produced by `cmake --build build` from the
-    // repo root - adjust for a release build or a different checkout path.
+    // When packaged (scripts/package_app.sh), the core dylib ships inside
+    // the app bundle's Resources - prefer that if present.
+    if let bundled = Bundle.main.resourcePath.map({ "\($0)/libapplescreen_core.dylib" }),
+       FileManager.default.fileExists(atPath: bundled) {
+        return bundled
+    }
+
+    // Otherwise assume a development run (`swift run`/.build/debug binary
+    // launched from the repo) and point at the debug build produced by
+    // `cmake --build build` from the repo root.
     let repoRoot = URL(fileURLWithPath: #filePath)
         .deletingLastPathComponent() // Views
         .deletingLastPathComponent() // Applescreen
