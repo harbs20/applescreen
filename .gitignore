@@ -1,0 +1,12 @@
+/target/
+/dist/
+*.log
+.DS_Store
+
+# CMake (core/)
+/build/
+
+# Swift Package Manager (app/)
+/app/.build/
+/app/.swiftpm/
+

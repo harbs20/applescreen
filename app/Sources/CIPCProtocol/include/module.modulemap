@@ -1,0 +1,4 @@
+module CIPCProtocol {
+    header "CIPCProtocol.h"
+    export *
+}
