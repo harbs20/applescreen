@@ -2,12 +2,12 @@
 
 #include <stdatomic.h>
 
-#include "command_queue.h"
 #include "log.h"
+#include "overlay_gl2.h"
 
 static applescreen_glfw_create_window_fn g_real_create_window = NULL;
 static applescreen_glfw_destroy_window_fn g_real_destroy_window = NULL;
-static applescreen_glfw_poll_events_fn g_real_poll_events = NULL;
+static applescreen_glfw_swap_buffers_fn g_real_swap_buffers = NULL;
 
 static GLFWwindow *g_window = NULL;
 static atomic_bool g_window_ready = false;
@@ -20,8 +20,8 @@ void applescreen_glfw_shim_set_real_destroy_window(void *real_ptr) {
     g_real_destroy_window = (applescreen_glfw_destroy_window_fn)real_ptr;
 }
 
-void applescreen_glfw_shim_set_real_poll_events(void *real_ptr) {
-    g_real_poll_events = (applescreen_glfw_poll_events_fn)real_ptr;
+void applescreen_glfw_shim_set_real_swap_buffers(void *real_ptr) {
+    g_real_swap_buffers = (applescreen_glfw_swap_buffers_fn)real_ptr;
 }
 
 GLFWwindow *applescreen_glfw_shim_create_window(int width, int height, const char *title,
@@ -52,10 +52,12 @@ void applescreen_glfw_shim_destroy_window(GLFWwindow *window) {
     }
 }
 
-void applescreen_glfw_shim_poll_events(void) {
-    applescreen_command_queue_drain();
-    if (g_real_poll_events) {
-        g_real_poll_events();
+void applescreen_glfw_shim_swap_buffers(GLFWwindow *window) {
+    if (window == g_window) {
+        applescreen_overlay_render_frame(window);
+    }
+    if (g_real_swap_buffers) {
+        g_real_swap_buffers(window);
     }
 }
 

@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "glfw_shim.h"
+#include "input_shim.h"
 #include "log.h"
 
 static void *hooked_dlsym(void *handle, const char *symbol);
@@ -93,9 +94,25 @@ static void *hooked_dlsym(void *handle, const char *symbol) {
             applescreen_glfw_shim_set_real_destroy_window(real);
             return (void *)applescreen_glfw_shim_destroy_window;
         }
-        if (strcmp(symbol, "glfwPollEvents") == 0) {
-            applescreen_glfw_shim_set_real_poll_events(real);
-            return (void *)applescreen_glfw_shim_poll_events;
+        if (strcmp(symbol, "glfwSwapBuffers") == 0) {
+            applescreen_glfw_shim_set_real_swap_buffers(real);
+            return (void *)applescreen_glfw_shim_swap_buffers;
+        }
+        if (strcmp(symbol, "glfwSetKeyCallback") == 0) {
+            applescreen_input_shim_set_real_set_key_callback(real);
+            return (void *)applescreen_input_shim_set_key_callback;
+        }
+        if (strcmp(symbol, "glfwSetCursorPosCallback") == 0) {
+            applescreen_input_shim_set_real_set_cursor_pos_callback(real);
+            return (void *)applescreen_input_shim_set_cursor_pos_callback;
+        }
+        if (strcmp(symbol, "glfwSetMouseButtonCallback") == 0) {
+            applescreen_input_shim_set_real_set_mouse_button_callback(real);
+            return (void *)applescreen_input_shim_set_mouse_button_callback;
+        }
+        if (strcmp(symbol, "glfwSetScrollCallback") == 0) {
+            applescreen_input_shim_set_real_set_scroll_callback(real);
+            return (void *)applescreen_input_shim_set_scroll_callback;
         }
     }
 

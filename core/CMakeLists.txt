@@ -25,15 +25,18 @@ add_library(applescreen_core SHARED
     src/log.c
     src/interpose.c
     src/glfw_shim.c
-    src/command_queue.c
     src/window_control.c
-    src/ipc_server.c
+    src/input_shim.c
+    src/overlay_gl2.c
+    src/config.c
+    src/modes.c
+    src/hotkeys.c
+    src/key_rebind.c
 )
-target_include_directories(applescreen_core PRIVATE include)
 set_target_properties(applescreen_core PROPERTIES
     OUTPUT_NAME "applescreen_core"
     SUFFIX ".dylib"
 )
-target_link_libraries(applescreen_core PRIVATE pthread)
+target_link_libraries(applescreen_core PRIVATE pthread "-framework OpenGL")
 target_link_options(applescreen_core PRIVATE -Wl,-ld_classic)
 applescreen_sign(applescreen_core)
